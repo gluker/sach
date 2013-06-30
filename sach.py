@@ -4,7 +4,8 @@ class worker:
 
     hourly_salary = 0
     overtime_rate = 0
-    shabes_rate = 0    
+    shabes_rate = 0
+    shabes_time = 0
     param_list = []
     filename = ""
     dutys = []
@@ -15,17 +16,20 @@ class worker:
         d_min = 0
         h_s = 0
         def __str__(self):
-            return self.date.strftime("%d/%m/%y  %H:%M")+" "+str(self.date.weekday())+" "+str(self.price())+" NIS"
-        def __init__(self,d,m,y,s_h,s_m,d_h,d_m,h_s):
+            return self.date.strftime("%d/%m/%y %w %H:%M ")+str(self.price())+" NIS"
+        def __init__(self,d,m,y,s_h,s_m,d_h,d_m,h_s,s_t):
             self.d_hour = d_h
             self.d_min = d_m
             self.h_s = h_s
+            self.shabes_time = s_t
             self.date = datetime(y,m,d,s_h,s_m)
+            
         def price(self):
             sum = 0
-            print self.date.weekday()
-            if self.date.weekday() in (4,5):
-                sum += 100
+            if self.date.weekday() == 4:
+                shab_start = self.date.replace(hour=int(self.shabes_time))
+                print shab_start
+                              
             sum += self.d_hour*self.h_s
             sum += self.d_min*(self.h_s/60)
             return round(sum,2)
@@ -40,18 +44,19 @@ class worker:
                 self.param_list.append(float(line))
         self.hourly_salary = self.param_list[0]
         self.overtime_rate = self.param_list[1]
-        self.shabes_rate = self.param_list[2] 
+        self.shabes_rate = self.param_list[2]
+        self.shabes_time = self.param_list[3]
                 
         
     def addDuty(self,d,m,y,s_h,s_m,d_h,d_m):
-        cd = self.duty(d,m,y,s_h,s_m,d_h,d_m,self.hourly_salary)
+        cd = self.duty(d,m,y,s_h,s_m,d_h,d_m,self.hourly_salary,self.shabes_time)
         self.dutys.append(cd)
 
 
 
 
 iam = worker("data.dt")
-iam.addDuty(29,6,2013,6,0,8,0)
+iam.addDuty(28,6,2013,14,0,8,0)
 iam.addDuty(20,6,2013,6,0,8,0)
 iam.addDuty(18,6,2013,6,0,8,0)
 iam.addDuty(19,6,2013,6,0,12,0)
