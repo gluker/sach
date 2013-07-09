@@ -72,7 +72,7 @@ class Worker:
                             (self.hourly_salary * (self.shabes_rate - 1)))
             elif (self.isHolyday(self.date) and
                   not self.isHolyday(self.date_fin)):
-                sum += ((shab_end.hour - self.date_fin.hour) *
+                sum += ((shab_end.hour - self.date.hour) *
                             (self.hourly_salary * (self.shabes_rate - 1)))
             
                      
@@ -99,7 +99,16 @@ class Worker:
                        self.overtime_hour, self.overtime_rate)
         self.dutys.append(cd)
 
-    def totalPrice(self):
+    def readFile(self, filename):
+        fl = open(filename,'r')
+        for line in fl:
+            if line[0] != '#':
+                tl = []
+                for item in line.split():
+                    tl.append(int(item))
+                self.addDuty(*tl)    
+                                   
+    def totalBrutto(self):
         sum = 0
         for duty in self.dutys:
             sum += duty.price()
@@ -107,16 +116,20 @@ class Worker:
 
 
 iam = Worker("data.dt")
+iam.readFile("dutys.dt")
+"""
 iam.addDuty(28,6,2013,14,0,8,0)
 iam.addDuty(29,6,2013,14,0,8,0)
 iam.addDuty(20,6,2013,6,0,8,0)
 iam.addDuty(18,6,2013,6,0,8,0)
 iam.addDuty(19,6,2013,6,0,12,0)
+iam.addDuty(9,7,2013,5,30,12,0)
+"""
+
+
 print iam.hourly_salary 
 for duty in iam.dutys:
     print duty
-print iam.totalPrice()
+print iam.totalBrutto()
 
-d = datetime(1,1,1)
-print d.weekday()
-
+iam.readFile("dutys.dt")
