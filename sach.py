@@ -36,7 +36,6 @@ class Worker:
             self.date_fin = self.date+timedelta(hours=self.d_hour,
                                                          minutes=self.d_min)
             
-            
         def isHolyday(self, date):
 
             if (date.weekday() == 4) and (date.hour >= self.shabes_time):
@@ -55,15 +54,12 @@ class Worker:
                                       (self.overtime_rate-1)) / 60)
                 sum += (self.d_hour - self.overtime_hour) * (
                         self.hourly_salary * (self.overtime_rate-1))
-
-                
             if self.date.weekday() == 4:
                 shab_start = self.date.replace(hour = int(self.shabes_time))
                 shab_end = shab_start+timedelta(days=1)
             if self.date.weekday() == 5:
                 shab_end = self.date.replace(hour = int(self.shabes_time))
                 shab_start = shab_end+timedelta(days=-1)
-            
             if self.isHolyday(self.date) and self.isHolyday(self.date_fin):
                 sum *= self.shabes_rate
             elif (not self.isHolyday(self.date) and
@@ -74,9 +70,6 @@ class Worker:
                   not self.isHolyday(self.date_fin)):
                 sum += ((shab_end.hour - self.date.hour) *
                             (self.hourly_salary * (self.shabes_rate - 1)))
-            
-                     
-                       
             return round(sum, 2)
 
 
@@ -114,22 +107,29 @@ class Worker:
             sum += duty.price()
         return sum
 
+    def getTax(self,filename):
+        lst = []
+        file = open(filename, 'r')
+        for line in file:
+            if line[0] != '#':
+                lst.append(float(line))
+        step = lst[0]
+        brut = self.totalBrutto()
+        if brut <= step:
+            self.national_ins = brut * lst[1]
+            self.health_ins = brut * lst[3]
+        else:
+            self.national_ins = ((brut - step) * lst[2]) + (step * lst[1])
+            self.health_ins = ((brut - step) * lst[4]) + (step * lst[3])
+        return round(self.national_ins + self.health_ins, 2)
+
 
 iam = Worker("data.dt")
 iam.readFile("dutys.dt")
-"""
-iam.addDuty(28,6,2013,14,0,8,0)
-iam.addDuty(29,6,2013,14,0,8,0)
-iam.addDuty(20,6,2013,6,0,8,0)
-iam.addDuty(18,6,2013,6,0,8,0)
-iam.addDuty(19,6,2013,6,0,12,0)
-iam.addDuty(9,7,2013,5,30,12,0)
-"""
-
-
 print iam.hourly_salary 
 for duty in iam.dutys:
     print duty
-print iam.totalBrutto()
+print "Brutto: " + str(iam.totalBrutto())
+print "Taxes: " + str(iam.getTax('taxes.dt'))
 
-iam.readFile("dutys.dt")
+
