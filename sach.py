@@ -1,4 +1,8 @@
 from datetime import *
+import json
+
+def date_handler(obj):
+    return obj.isoformat() if hasattr(obj, 'isoformat') else obj
 
 class Worker:
 
@@ -21,7 +25,9 @@ class Worker:
             return self.date.strftime("%d/%m/%y %w %H:%M ")+(
                    str(self.price())+" NIS "+
                    self.date_fin.strftime("%d/%m/%y %w %H:%M "))
-        
+
+        def json_form(self):
+            return json.dumps({"date":self.date,"date_fin":self.date_fin,"base":self.hourly_salary},default=date_handler)
         def __init__(self, d, m, y, start_h, start_m, duration_h, duration_m,
                      hourly_salary, shabes_time, shabes_rate,
                      overtime_hour, overtime_rate):
@@ -35,7 +41,7 @@ class Worker:
             self.date = datetime(y, m, d, start_h, start_m)
             self.date_fin = self.date+timedelta(hours=self.d_hour,
                                                          minutes=self.d_min)
-            
+
         def isHolyday(self, date):
 
             if (date.weekday() == 4) and (date.hour >= self.shabes_time):
@@ -44,7 +50,7 @@ class Worker:
                 return True
             else:
                 return False
-            
+
         def price(self):
             sum = 0
             sum += self.d_hour * self.hourly_salary
@@ -85,12 +91,24 @@ class Worker:
         self.overtime_hour = self.param_list[2]
         self.shabes_rate = self.param_list[3]
         self.shabes_time = self.param_list[4]
-                        
+
     def addDuty(self,d,m,y, start_h, start_m, duration_h, duration_m):
         cd = self.Duty(d, m, y, start_h, start_m, duration_h, duration_m,
                        self.hourly_salary, self.shabes_time, self.shabes_rate,
                        self.overtime_hour, self.overtime_rate)
         self.dutys.append(cd)
+
+    def readJSON(self,filename):
+        fl = open(filename,'r')
+        fload = json.load(fl)
+        for duty in fload["dutys"]:
+            date = datetime.strptime(duty["date"],'%Y-%m-%dT%H:%M:%S')
+            date_fin = datetime.strptime(duty["date_fin"],'%Y-%m-%dT%H:%M:%S')
+            delta = (date_fin - date).seconds
+            d_hour = delta // 3600
+            d_min = delta // 60 - d_hour*60
+            self.addDuty(date.day,date.month,date.year,date.hour,date.minute,d_hour,d_min)
+
 
     def readFile(self, filename):
         fl = open(filename,'r')
@@ -99,8 +117,8 @@ class Worker:
                 tl = []
                 for item in line.split():
                     tl.append(int(item))
-                self.addDuty(*tl)    
-                                   
+                self.addDuty(*tl)
+
     def totalBrutto(self):
         sum = 0
         for duty in self.dutys:
@@ -125,9 +143,11 @@ class Worker:
 
 
 iam = Worker("data.dt")
-iam.readFile("dutys.dt")
-print iam.hourly_salary 
+iam.readJSON("dutys.json")
+#iam.readFile("dutys.dt")
+print iam.hourly_salary
 for duty in iam.dutys:
+    print duty.json_form()
     print duty
 print "Brutto: " + str(iam.totalBrutto())
 print "Taxes: " + str(iam.getTax('taxes.dt'))
