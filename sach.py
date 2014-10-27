@@ -143,7 +143,7 @@ class Worker:
 
 
 iam = Worker("data.dt")
-iam.readJSON("dutys.json")
+iam.readJSON("ndutys.json")
 #iam.readFile("dutys.dt")
 print iam.hourly_salary
 for duty in iam.dutys:
