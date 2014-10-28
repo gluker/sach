@@ -1,13 +1,27 @@
 import datetime
+import wx
 import json
-FILENAME="ndutys.json"
-fl = open(FILENAME,'r')
-parced = json.load(fl)
-fl.close()
 
-base = float(raw_input("base:"))
-year = int(raw_input("Year:"))
-month = int(raw_input("Month:"))
+DEFAULTSTRUCT = {"dutys":[]}
+FILENAME="ndutysjson"
+try:
+    fl = open(FILENAME,'r')
+    parced = json.load(fl)
+    fl.close()
+except IOError:
+    print ("File "+FILENAME+" don't exist")
+    if raw_input("Create?") != 'y':
+        exit()
+    parced = DEFAULTSTRUCT
+while(1):
+    try:
+        base = float(raw_input("base:"))
+        year = int(raw_input("Year:"))
+        month = int(raw_input("Month:"))
+    except ValueError:
+        print "Try again"
+        continue
+    break
 while (1):
     day = (raw_input("Day:"))
     hour = (raw_input("Hour:"))
@@ -28,6 +42,6 @@ while (1):
         break
 
 print parced
-fl = open(FILENAME,'w')
+fl = open(FILENAME,'w+')
 json.dump(parced,fl,separators=(',', ': '),indent=1)
 fl.close()
