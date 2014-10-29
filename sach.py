@@ -1,5 +1,8 @@
+import wx
 from datetime import *
 import json
+
+
 
 def date_handler(obj):
     return obj.isoformat() if hasattr(obj, 'isoformat') else obj
@@ -140,6 +143,17 @@ class Worker:
             self.national_ins = ((brut - step) * lst[2]) + (step * lst[1])
             self.health_ins = ((brut - step) * lst[4]) + (step * lst[3])
         return round(self.national_ins + self.health_ins, 2)
+
+
+class MainFrame(wx.Frame):
+    def __init__(self,parent,title):
+        wx.Frame.__init__(self,parent,title=title,size=(200,100))
+        self.line = wx.StaticText(self,label="XYU")
+        self.Show(True)
+
+app = wx.App(False)
+frame = MainFrame(None,"Salary counter")
+app.MainLoop()
 
 
 iam = Worker("data.dt")
