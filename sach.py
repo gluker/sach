@@ -106,7 +106,10 @@ class Worker:
                        self.hourly_salary, self.shabes_time, self.shabes_rate,
                        self.overtime_hour, self.overtime_rate)
         self.dutys.append(cd)
-
+    def getDate(self,duty):
+        return duty.date
+    def byDate(self):
+        return list(sorted(self.dutys,key=self.getDate))
     def readJSON(self,filename):
         fl = open(filename,'r')
         fload = json.load(fl)
@@ -158,7 +161,7 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self,parent,title=title)
         panel = wx.Panel(self)
         self.grid = gridlib.Grid(panel)
-        self.grid.CreateGrid(rows,4)
+        self.grid.CreateGrid(rows+2,4)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.grid,1,wx.EXPAND)
         panel.SetSizer(sizer)
@@ -167,15 +170,16 @@ class MainFrame(wx.Frame):
 
 iam = Worker("data.dt")
 iam.readJSON("oct14.json")
-#iam.readFile("dutys.dt")
-print iam.hourly_salary
 
 app = wx.App(False)
-frame = MainFrame(None,"Salary counter",iam.dutyCount())
+rows = iam.dutyCount()
+frame = MainFrame(None,"Salary counter",rows)
 frame.Show()
 for i in range(iam.dutyCount()):
     for j in range(len(iam.dutys[0].listView())):
-        frame.grid.SetCellValue(i,j,iam.dutys[i].listView()[j])
+        frame.grid.SetCellValue(i,j,iam.byDate()[i].listView()[j])
+frame.grid.SetCellValue(rows,2,"Brutto:")
+frame.grid.SetCellValue(rows,3,str(iam.totalBrutto()))
 frame.grid.AutoSize()
 #frame.newline = wx.StaticText(frame,label = "Taxes: " + str(iam.getTax('taxes.dt')))
 app.MainLoop()
