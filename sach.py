@@ -1,6 +1,7 @@
 import wx
 from datetime import *
 import json
+import wx.grid as gridlib
 
 
 
@@ -24,6 +25,11 @@ class Worker:
         d_hour = 0
         d_min = 0
         h_s = 0
+        def listView(self):
+            return [self.date.strftime("%d/%m/%y"),
+                    self.date.strftime("%H:%M"),
+                    str(self.d_hour)+":"+str(self.d_min),
+                    str(self.price())]
         def __str__(self):
             return self.date.strftime("%d/%m/%y %w %H:%M ")+(
                    str(self.price())+" NIS "+
@@ -145,25 +151,33 @@ class Worker:
         return round(self.national_ins + self.health_ins, 2)
 
 
+    def dutyCount(self):
+        return len(self.dutys)
 class MainFrame(wx.Frame):
-    def __init__(self,parent,title):
-        wx.Frame.__init__(self,parent,title=title,size=(200,100))
-        self.line = wx.StaticText(self,label="XYU")
-        self.Show(True)
-
-app = wx.App(False)
-frame = MainFrame(None,"Salary counter")
-app.MainLoop()
-
+    def __init__(self,parent,title,rows):
+        wx.Frame.__init__(self,parent,title=title)
+        panel = wx.Panel(self)
+        self.grid = gridlib.Grid(panel)
+        self.grid.CreateGrid(rows,4)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.grid,1,wx.EXPAND)
+        panel.SetSizer(sizer)
+    def setValue(self,x,y,value):
+        self.grid.SetCellValue(x,y,value)
 
 iam = Worker("data.dt")
-iam.readJSON("ndutys.json")
+iam.readJSON("oct14.json")
 #iam.readFile("dutys.dt")
 print iam.hourly_salary
-for duty in iam.dutys:
-    print duty.json_form()
-    print duty
-print "Brutto: " + str(iam.totalBrutto())
-print "Taxes: " + str(iam.getTax('taxes.dt'))
+
+app = wx.App(False)
+frame = MainFrame(None,"Salary counter",iam.dutyCount())
+frame.Show()
+for i in range(iam.dutyCount()):
+    for j in range(len(iam.dutys[0].listView())):
+        frame.grid.SetCellValue(i,j,iam.dutys[i].listView()[j])
+frame.grid.AutoSize()
+#frame.newline = wx.StaticText(frame,label = "Taxes: " + str(iam.getTax('taxes.dt')))
+app.MainLoop()
 
 

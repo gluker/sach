@@ -3,7 +3,7 @@ import wx
 import json
 
 DEFAULTSTRUCT = {"dutys":[]}
-FILENAME="ndutysjson"
+FILENAME="oct14.json"
 try:
     fl = open(FILENAME,'r')
     parced = json.load(fl)
@@ -15,7 +15,7 @@ except IOError:
     parced = DEFAULTSTRUCT
 while(1):
     try:
-        base = float(raw_input("base:"))
+        base = float(raw_input("Hourly salary:"))
         year = int(raw_input("Year:"))
         month = int(raw_input("Month:"))
     except ValueError:
