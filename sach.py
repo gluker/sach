@@ -167,6 +167,7 @@ class MainFrame(wx.Frame):
         panel.SetSizer(sizer)
         menuBar = wx.MenuBar()
         fileMenu = wx.Menu()
+        openMenuItem = fileMenu.Append(wx.NewId(), "Open", "Open file")
         exitMenuItem = fileMenu.Append(wx.NewId(), "Exit", "Exit")
         menuBar.Append(fileMenu,"&File")
 
