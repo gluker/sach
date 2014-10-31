@@ -165,6 +165,15 @@ class MainFrame(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.grid,1,wx.EXPAND)
         panel.SetSizer(sizer)
+        menuBar = wx.MenuBar()
+        fileMenu = wx.Menu()
+        exitMenuItem = fileMenu.Append(wx.NewId(), "Exit", "Exit")
+        menuBar.Append(fileMenu,"&File")
+
+        self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
+        self.SetMenuBar(menuBar)
+    def onExit(self,event):
+        self.Close()
     def setValue(self,x,y,value):
         self.grid.SetCellValue(x,y,value)
 
