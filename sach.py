@@ -157,14 +157,8 @@ class Worker:
     def dutyCount(self):
         return len(self.dutys)
 class MainFrame(wx.Frame):
-    def __init__(self,parent,title,rows):
-        wx.Frame.__init__(self,parent,title=title)
-        panel = wx.Panel(self)
-        self.grid = gridlib.Grid(panel)
-        self.grid.CreateGrid(rows+2,4)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.grid,1,wx.EXPAND)
-        panel.SetSizer(sizer)
+    def __init__(self,parent,title):
+        wx.Frame.__init__(self,parent,title=title,size=(300,500))
         menuBar = wx.MenuBar()
         fileMenu = wx.Menu()
         openMenuItem = fileMenu.Append(wx.NewId(), "Open", "Open file")
@@ -173,6 +167,15 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onOpen, openMenuItem)
         self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
         self.SetMenuBar(menuBar)
+    def createTable(self,w,h):
+        panel = wx.Panel(self)
+        panel.SetBackgroundColour('#FACE8D')
+        self.grid = gridlib.Grid(panel)
+        self.grid.CreateGrid(h,w)
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        sizer.Add(self.grid,1,wx.EXPAND)
+        panel.SetSizer(sizer)
+
     def onExit(self,event):
         self.Close()
     def onOpen(self,event):
@@ -182,35 +185,22 @@ class MainFrame(wx.Frame):
         try:
             global iam
             iam.readJSON(openFileDialog.GetPath())
+            self.createTable(4,0)
             self.loadTable(iam.byDate())
         except:
             print ("Error reading file")
-            
-    
+
+
     def loadTable(self,table):
         for i in range(len(table)):
+            self.grid.AppendRows(1)
             for j in range(len(table[0].listView())):
                 self.grid.SetCellValue(i,j,table[i].listView()[j])
-                
-    def setValue(self,x,y,value):
-        self.grid.SetCellValue(x,y,value)
 
 iam = Worker("data.dt")
-try:
-    iam.readJSON("ot14.json")
-except:
-    pass
-
 app = wx.App(False)
-rows = iam.dutyCount()
-frame = MainFrame(None,"Salary counter",rows)
+frame = MainFrame(None,"Salary counter")
 frame.Show()
-for i in range(iam.dutyCount()):
-    for j in range(len(iam.dutys[0].listView())):
-        frame.grid.SetCellValue(i,j,iam.byDate()[i].listView()[j])
-frame.grid.SetCellValue(rows,2,"Brutto:")
-frame.grid.SetCellValue(rows,3,str(iam.totalBrutto()))
-frame.grid.AutoSize()
 app.MainLoop()
 
 
