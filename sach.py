@@ -170,16 +170,36 @@ class MainFrame(wx.Frame):
         openMenuItem = fileMenu.Append(wx.NewId(), "Open", "Open file")
         exitMenuItem = fileMenu.Append(wx.NewId(), "Exit", "Exit")
         menuBar.Append(fileMenu,"&File")
-
+        self.Bind(wx.EVT_MENU, self.onOpen, openMenuItem)
         self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
         self.SetMenuBar(menuBar)
     def onExit(self,event):
         self.Close()
+    def onOpen(self,event):
+        openFileDialog = wx.FileDialog(self,"Open JSON file","","","JSON files (*.json)|*.json",wx.FD_OPEN | wx.FILE_MUST_EXIST)
+        if openFileDialog.ShowModal() == wx.ID_CANCEL:
+            return
+        try:
+            global iam
+            iam.readJSON(openFileDialog.GetPath())
+            self.loadTable(iam.byDate())
+        except:
+            print ("Error reading file")
+            
+    
+    def loadTable(self,table):
+        for i in range(len(table)):
+            for j in range(len(table[0].listView())):
+                self.grid.SetCellValue(i,j,table[i].listView()[j])
+                
     def setValue(self,x,y,value):
         self.grid.SetCellValue(x,y,value)
 
 iam = Worker("data.dt")
-iam.readJSON("oct14.json")
+try:
+    iam.readJSON("ot14.json")
+except:
+    pass
 
 app = wx.App(False)
 rows = iam.dutyCount()
@@ -191,7 +211,6 @@ for i in range(iam.dutyCount()):
 frame.grid.SetCellValue(rows,2,"Brutto:")
 frame.grid.SetCellValue(rows,3,str(iam.totalBrutto()))
 frame.grid.AutoSize()
-#frame.newline = wx.StaticText(frame,label = "Taxes: " + str(iam.getTax('taxes.dt')))
 app.MainLoop()
 
 
