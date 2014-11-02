@@ -161,20 +161,21 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self,parent,title=title,size=(300,500))
         menuBar = wx.MenuBar()
         fileMenu = wx.Menu()
-        openMenuItem = fileMenu.Append(wx.NewId(), "Open", "Open file")
-        exitMenuItem = fileMenu.Append(wx.NewId(), "Exit", "Exit")
+        openMenuItem = fileMenu.Append(wx.NewId(), "&Open\tCtrl+O", "Open file")
+        exitMenuItem = fileMenu.Append(wx.NewId(), "&Quit\tAlt+F4", "Exit")
         menuBar.Append(fileMenu,"&File")
         self.Bind(wx.EVT_MENU, self.onOpen, openMenuItem)
         self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
         self.SetMenuBar(menuBar)
+        self.statusBar =self.CreateStatusBar()
     def createTable(self,w,h):
         panel = wx.Panel(self)
         panel.SetBackgroundColour('#FACE8D')
         self.grid = gridlib.Grid(panel)
         self.grid.CreateGrid(h,w)
-        sizer = wx.BoxSizer(wx.VERTICAL)
-        sizer.Add(self.grid,1,wx.EXPAND)
-        panel.SetSizer(sizer)
+        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.sizer.Add(self.grid,1,wx.EXPAND)
+        panel.SetSizer(self.sizer)
 
     def onExit(self,event):
         self.Close()
@@ -187,7 +188,11 @@ class MainFrame(wx.Frame):
             iam.readJSON(openFileDialog.GetPath())
             self.createTable(4,0)
             self.loadTable(iam.byDate())
-        except:
+            global frame
+            self.sizer.Fit(frame)
+            self.statusBar.SetStatusText("Brutto:"+str(iam.totalBrutto()))
+        except Exception as e:
+            print (e)
             print ("Error reading file")
 
 
@@ -196,7 +201,14 @@ class MainFrame(wx.Frame):
             self.grid.AppendRows(1)
             for j in range(len(table[0].listView())):
                 self.grid.SetCellValue(i,j,table[i].listView()[j])
-
+        self.grid.SetColLabelValue(0,"Date")
+        self.grid.SetColLabelValue(1,"Time")
+        self.grid.SetColLabelValue(2,"Duration")
+        self.grid.SetColLabelValue(3,"Total")
+        self.grid.AutoSize()
+        global frame
+        frame.Refresh()
+        self.grid.SetRowLabelSize(0)
 iam = Worker("data.dt")
 app = wx.App(False)
 frame = MainFrame(None,"Salary counter")
