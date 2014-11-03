@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import wx
 from datetime import *
 import json
@@ -131,6 +133,15 @@ class Worker:
                     tl.append(int(item))
                 self.addDuty(*tl)
 
+    def totalHours(self):
+        hours = 0
+        mins = 0
+        for duty in self.dutys:
+            hours += duty.d_hour
+            mins += duty.d_min
+        hours += mins / 60
+        mins //= 60
+        return hours,mins
     def totalBrutto(self):
         sum = 0
         for duty in self.dutys:
@@ -173,8 +184,11 @@ class MainFrame(wx.Frame):
         panel.SetBackgroundColour('#FACE8D')
         self.grid = gridlib.Grid(panel)
         self.grid.CreateGrid(h,w)
-        self.sizer = wx.BoxSizer(wx.VERTICAL)
+        self.totals = gridlib.Grid(panel)
+        self.totals.CreateGrid(5,1)
+        self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.sizer.Add(self.grid,1,wx.EXPAND)
+        self.sizer.Add(self.totals,1,wx.EXPAND)
         panel.SetSizer(self.sizer)
 
     def onExit(self,event):
@@ -201,6 +215,14 @@ class MainFrame(wx.Frame):
             self.grid.AppendRows(1)
             for j in range(len(table[0].listView())):
                 self.grid.SetCellValue(i,j,table[i].listView()[j])
+        self.totals.SetRowLabelValue(0,"Total hours")
+        self.totals.SetCellValue(0,0,str(iam.totalHours()))
+        self.totals.SetRowLabelValue(1,"Brutto")
+        self.totals.SetCellValue(1,0,str(iam.totalBrutto()))
+        self.totals.SetRowLabelValue(2,"BTL")
+        self.totals.SetRowLabelValue(3,"Health tax")
+        self.totals.SetRowLabelValue(4,"Netto")
+
         self.grid.SetColLabelValue(0,"Date")
         self.grid.SetColLabelValue(1,"Time")
         self.grid.SetColLabelValue(2,"Duration")
