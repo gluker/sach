@@ -172,25 +172,33 @@ class MainFrame(wx.Frame):
         wx.Frame.__init__(self,parent,title=title,size=(300,500))
         menuBar = wx.MenuBar()
         fileMenu = wx.Menu()
+        newMenuItem = fileMenu.Append(wx.NewId(), "&New\tCtrl+N", "New file")
         openMenuItem = fileMenu.Append(wx.NewId(), "&Open\tCtrl+O", "Open file")
         exitMenuItem = fileMenu.Append(wx.NewId(), "&Quit\tAlt+F4", "Exit")
         menuBar.Append(fileMenu,"&File")
+        self.Bind(wx.EVT_MENU, self.onNew, newMenuItem)
         self.Bind(wx.EVT_MENU, self.onOpen, openMenuItem)
         self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
         self.SetMenuBar(menuBar)
         self.statusBar =self.CreateStatusBar()
     def createTable(self,w,h):
         panel = wx.Panel(self)
-        panel.SetBackgroundColour('#FACE8D')
+        #panel.SetBackgroundColour('#FACE8D')
         self.grid = gridlib.Grid(panel)
         self.grid.CreateGrid(h,w)
         self.totals = gridlib.Grid(panel)
         self.totals.CreateGrid(5,1)
+        self.add = wx.Button(panel,id=wx.ID_ANY,label="Add duty")
+        self.rsizer = wx.BoxSizer(wx.VERTICAL)
+        self.rsizer.Add(self.totals,7,wx.EXPAND)
+        self.totals.Center()
+        self.rsizer.Add(self.add,1,wx.EXPAND)
         self.sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.sizer.Add(self.grid,1,wx.EXPAND)
-        self.sizer.Add(self.totals,1,wx.EXPAND)
+        self.sizer.Add(self.rsizer,0,wx.EXPAND)
         panel.SetSizer(self.sizer)
-
+    def onNew(self,event):
+        return
     def onExit(self,event):
         self.Close()
     def onOpen(self,event):
@@ -222,7 +230,7 @@ class MainFrame(wx.Frame):
         self.totals.SetRowLabelValue(2,"BTL")
         self.totals.SetRowLabelValue(3,"Health tax")
         self.totals.SetRowLabelValue(4,"Netto")
-
+        self.totals.AutoSize()
         self.grid.SetColLabelValue(0,"Date")
         self.grid.SetColLabelValue(1,"Time")
         self.grid.SetColLabelValue(2,"Duration")
