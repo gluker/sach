@@ -168,6 +168,11 @@ class Worker:
     def dutyCount(self):
         return len(self.dutys)
 class MainFrame(wx.Frame):
+    class NewDutyFrame(wx.Frame)
+        def __init__(self,parent):
+            wx.Frame.__init__(self,parent,title="New Duty",size=(300,200))
+
+
     def __init__(self,parent,title):
         wx.Frame.__init__(self,parent,title=title,size=(300,500))
         menuBar = wx.MenuBar()
@@ -182,7 +187,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.onOpen, openMenuItem)
         self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
         self.SetMenuBar(menuBar)
-        self.statusBar =self.CreateStatusBar()
+        self.statusBar = self.CreateStatusBar()
     def createTable(self,w,h):
         panel = wx.Panel(self)
         #panel.SetBackgroundColour('#FACE8D')
@@ -191,6 +196,7 @@ class MainFrame(wx.Frame):
         self.totals = gridlib.Grid(panel)
         self.totals.CreateGrid(5,1)
         self.add = wx.Button(panel,id=wx.ID_ANY,label="Add duty")
+        self.Bind(wx.EVT_BUTTON, self.onAdd,id=wx.ID_ANY)
         self.rsizer = wx.BoxSizer(wx.VERTICAL)
         self.rsizer.Add(self.totals,7,wx.EXPAND)
         self.totals.Center()
@@ -199,6 +205,9 @@ class MainFrame(wx.Frame):
         self.sizer.Add(self.grid,1,wx.EXPAND)
         self.sizer.Add(self.rsizer,0,wx.EXPAND)
         panel.SetSizer(self.sizer)
+    def onAdd(self,event):
+        addframe = self.NewDutyFrame(self)
+        addframs.Show()
     def onSave(self,event):
         if wx.MessageBox("Rewrite current file?","Confirm",wx.ICON_QUESTION | wx.YES_NO,self)==wx.NO:
 
