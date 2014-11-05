@@ -173,10 +173,12 @@ class MainFrame(wx.Frame):
         menuBar = wx.MenuBar()
         fileMenu = wx.Menu()
         newMenuItem = fileMenu.Append(wx.NewId(), "&New\tCtrl+N", "New file")
+        saveMenuItem = fileMenu.Append(wx.NewId(), "&Save\tCtrl+S", "Save")
         openMenuItem = fileMenu.Append(wx.NewId(), "&Open\tCtrl+O", "Open file")
         exitMenuItem = fileMenu.Append(wx.NewId(), "&Quit\tAlt+F4", "Exit")
         menuBar.Append(fileMenu,"&File")
         self.Bind(wx.EVT_MENU, self.onNew, newMenuItem)
+        self.Bind(wx.EVT_MENU, self.onSave, saveMenuItem)
         self.Bind(wx.EVT_MENU, self.onOpen, openMenuItem)
         self.Bind(wx.EVT_MENU, self.onExit, exitMenuItem)
         self.SetMenuBar(menuBar)
@@ -197,6 +199,11 @@ class MainFrame(wx.Frame):
         self.sizer.Add(self.grid,1,wx.EXPAND)
         self.sizer.Add(self.rsizer,0,wx.EXPAND)
         panel.SetSizer(self.sizer)
+    def onSave(self,event):
+        if wx.MessageBox("Rewrite current file?","Confirm",wx.ICON_QUESTION | wx.YES_NO,self)==wx.NO:
+
+            return
+        return
     def onNew(self,event):
         return
     def onExit(self,event):
