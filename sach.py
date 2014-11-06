@@ -168,9 +168,30 @@ class Worker:
     def dutyCount(self):
         return len(self.dutys)
 class MainFrame(wx.Frame):
-    class NewDutyFrame(wx.Frame)
+    class NewDutyFrame(wx.Frame):
         def __init__(self,parent):
             wx.Frame.__init__(self,parent,title="New Duty",size=(300,200))
+            panel = wx.Panel(self)
+            self.dateLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Date")
+            self.dateIn = wx.TextCtrl(panel,id=wx.ID_ANY)
+            self.dateSizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.dateSizer.Add(self.dateLabel,1,wx.EXPAND)
+            self.dateSizer.Add(self.dateIn,1,wx.EXPAND)
+
+            self.durationLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Duration")
+            self.durationIn = wx.TextCtrl(panel,id=wx.ID_ANY)
+            self.durationSizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.durationSizer.Add(self.durationLabel,1,wx.EXPAND)
+            self.durationSizer.Add(self.durationIn,1,wx.EXPAND)
+
+
+
+
+            
+            self.addSizer = wx.BoxSizer(wx.VERTICAL)
+            self.addSizer.Add(self.dateSizer,1,wx.EXPAND)
+            self.addSizer.Add(self.durationSizer,1,wx.EXPAND)
+            panel.SetSizer(self.addSizer)
 
 
     def __init__(self,parent,title):
@@ -207,7 +228,7 @@ class MainFrame(wx.Frame):
         panel.SetSizer(self.sizer)
     def onAdd(self,event):
         addframe = self.NewDutyFrame(self)
-        addframs.Show()
+        addframe.Show()
     def onSave(self,event):
         if wx.MessageBox("Rewrite current file?","Confirm",wx.ICON_QUESTION | wx.YES_NO,self)==wx.NO:
 
