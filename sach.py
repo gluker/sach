@@ -170,27 +170,38 @@ class Worker:
 class MainFrame(wx.Frame):
     class NewDutyFrame(wx.Frame):
         def __init__(self,parent):
-            wx.Frame.__init__(self,parent,title="New Duty",size=(300,200))
+            wx.Frame.__init__(self,parent,title="New Duty",size=(300,130))
             panel = wx.Panel(self)
             self.dateLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Date")
             self.dateIn = wx.TextCtrl(panel,id=wx.ID_ANY)
             self.dateSizer = wx.BoxSizer(wx.HORIZONTAL)
             self.dateSizer.Add(self.dateLabel,1,wx.EXPAND)
-            self.dateSizer.Add(self.dateIn,1,wx.EXPAND)
+            self.dateSizer.Add(self.dateIn,2,wx.EXPAND)
 
             self.durationLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Duration")
             self.durationIn = wx.TextCtrl(panel,id=wx.ID_ANY)
             self.durationSizer = wx.BoxSizer(wx.HORIZONTAL)
             self.durationSizer.Add(self.durationLabel,1,wx.EXPAND)
-            self.durationSizer.Add(self.durationIn,1,wx.EXPAND)
+            self.durationSizer.Add(self.durationIn,2,wx.EXPAND)
 
+            self.hourlyLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Hourly")
+            self.hourlyIn = wx.TextCtrl(panel,id=wx.ID_ANY)
+            self.hourlySizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.hourlySizer.Add(self.hourlyLabel,1,wx.EXPAND)
+            self.hourlySizer.Add(self.hourlyIn,2,wx.EXPAND)
 
+            self.addButton = wx.Button(panel,id=wx.ID_ANY,label="Add")
+            self.cancelButton = wx.Button(panel,id=wx.ID_ANY,label="Cancel")
+            self.buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.buttonSizer.Add(self.addButton,1,wx.EXPAND)
+            self.buttonSizer.Add(self.cancelButton,1,wx.EXPAND)
 
-
-            
             self.addSizer = wx.BoxSizer(wx.VERTICAL)
             self.addSizer.Add(self.dateSizer,1,wx.EXPAND)
             self.addSizer.Add(self.durationSizer,1,wx.EXPAND)
+            self.addSizer.Add(self.hourlySizer,1,wx.EXPAND)
+            self.addSizer.Add(self.buttonSizer,1,wx.EXPAND)
+
             panel.SetSizer(self.addSizer)
 
 
