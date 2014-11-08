@@ -178,6 +178,12 @@ class MainFrame(wx.Frame):
             self.dateSizer.Add(self.dateLabel,1,wx.EXPAND)
             self.dateSizer.Add(self.dateIn,2,wx.EXPAND)
 
+            self.timeLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Time")
+            self.timeIn = wx.TextCtrl(panel,id=wx.ID_ANY)
+            self.timeSizer = wx.BoxSizer(wx.HORIZONTAL)
+            self.timeSizer.Add(self.timeLabel,1,wx.EXPAND)
+            self.timeSizer.Add(self.timeIn,2,wx.EXPAND)
+
             self.durationLabel = wx.StaticText(panel,id=wx.ID_ANY,label="Duration")
             self.durationIn = wx.TextCtrl(panel,id=wx.ID_ANY)
             self.durationSizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -195,15 +201,21 @@ class MainFrame(wx.Frame):
             self.buttonSizer = wx.BoxSizer(wx.HORIZONTAL)
             self.buttonSizer.Add(self.addButton,1,wx.EXPAND)
             self.buttonSizer.Add(self.cancelButton,1,wx.EXPAND)
+            self.cancelButton.Bind(wx.EVT_BUTTON,self.onCancel)
+            self.addButton.Bind(wx.EVT_BUTTON,self.onAdd)
 
             self.addSizer = wx.BoxSizer(wx.VERTICAL)
             self.addSizer.Add(self.dateSizer,1,wx.EXPAND)
+            self.addSizer.Add(self.timeSizer,1,wx.EXPAND)
             self.addSizer.Add(self.durationSizer,1,wx.EXPAND)
             self.addSizer.Add(self.hourlySizer,1,wx.EXPAND)
             self.addSizer.Add(self.buttonSizer,1,wx.EXPAND)
 
             panel.SetSizer(self.addSizer)
-
+        def onAdd(self,event):
+            return
+        def onCancel(self,event):
+            self.Close()
 
     def __init__(self,parent,title):
         wx.Frame.__init__(self,parent,title=title,size=(300,500))
